@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2046
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnitFixtureDependent", "NUnitFixtureDependent\NUnitFixtureDependent.csproj", "{6A2E5787-9D8C-4489-9EA1-FC5F25BF8CD7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NUnit.FixtureDependent", "src\NUnit.FixtureDependent\NUnit.FixtureDependent.csproj", "{6A2E5787-9D8C-4489-9EA1-FC5F25BF8CD7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
