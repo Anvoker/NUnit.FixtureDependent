@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("NUnit.FixtureDependent")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Extends NUnit to allow the passing of generic parameters to test methods via TestFixtureSource.")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Andrei Ionescu")]
 [assembly: AssemblyProduct("NUnitFixtureDependent")]
-[assembly: AssemblyCopyright("Copyright ©  2019")]
+[assembly: AssemblyCopyright("Copyright (c) 2019 Andrei Ionescu")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

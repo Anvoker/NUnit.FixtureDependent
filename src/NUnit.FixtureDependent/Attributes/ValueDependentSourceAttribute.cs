@@ -148,7 +148,8 @@ namespace NUnit.FixtureDependent
             foreach (var argument in arguments)
             {
                 var argumentType = argument.GetType();
-                if (type == argumentType || argumentType.IsSubclassOf(type))
+                var genericType = argumentType.GetGenericTypeDefinition();
+                if (type == genericType || genericType.IsSubclassOf(type))
                 {
                     return argument;
                 }
