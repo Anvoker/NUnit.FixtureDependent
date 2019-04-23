@@ -4,34 +4,123 @@ Extends NUnit to permit generic test data residing in a test fixture to be passe
 This decouples test methods from test data, allows combining strategies to be used on data that was fed from ``TestFixtureSource`` (which is normally impossible) and still lets the test cases display properly in the test runner GUI.
 
 # How it works
-**NUnit.FixtureDependent** defines an attribute called ``ValueSourceDependent`` that can access the ``Arguments`` property of a Test Fixture, retrieve a variable, generally a data class, and then access a member of that data class to populate test cases. 
+The ``Arguments`` property of a test fixture is populated with data by NUnit when a fixture is given its constructor arguments via an attribute like ``TestFixtureSource``.
 
-The member has to be an array. The data class is initially fed to the Test Fixture via its constructor and the ``TestFixtureSource`` attribute.
+Normally, no other attributes access that property. But they **could**.
 
-# How do I use it?
-Check out ``src/NUnit.FixtureDependent.Sample``. The code, summary tags and comments will help you understand much better than reading the readme.
+**NUnit.FixtureDependent** defines two attributes called ``FixtureValueSource`` and ``FixtureDirectValueSource`` that exploit this.
 
-The "short" of it is that you need to:
-1. Define a test data class with generic arrays as members.
-2. Define a static class to hold instances of the test data class. These instances will act as sources.
-3. Define a generic test fixture with a constructor that takes an instance of the data test class as its argument.
-4. Define a ``TestFixtureParameters`` factory that lets you specify the type arguments of the test fixture and pass a test data class instance as an argument.
-5. Define a static class we'll refer to as provider. Have it call the factory's construct method for each source in part and return an array of ``TestFixtureParameters`` through a property we'll arbitrarily call GetArgs.
-6. Annotate the generic test fixture with the ``TestFixtureSource`` attribute using the provider's GetArgs property as the argument to the attribute's constructor.
-6. Annotate the generic parametrized test methods in the fixture with a dependent combinatorial strategy attribute: ``CombinatorialDependent``, ``SequentialDependent``, or ``PairwiseDependent``.
-7. Annotate the parameters of the generic parametrized test methods with the ``ValueSourceDependent`` attribute, using the type of the test data class as the first argument, and the name of the member you want to access in the test data class as the second argument. 
+These attributes can access the ``Arguments`` property, retrieve values and use them to parametrize generic test methods and generate test cases.
 
-This will result in each individual element in the specified member's array serving as the data source of that parameter as if you had used ``ValueSource``.
+## FixtureDirectValueSource
 
-For example if you had a test data class called ``TestData<T>`` that had a ``T[] dataParam`` property and you wanted that property to be used as the source of a parameter you would write it like this:
+Used to annotate **parameters**. Takes no arguments.
+
+Attempts to find an object in the fixture's ``Arguments`` property whose type is assignable to the **parameter's type**.
 
 ```csharp
-[Test, SequentialDependent]
-public void TestMethod([ValueDependentSource(typeof(TestData<>), nameof(TestData<T>.dataParam))] T param)
+[TestFixtureSource(typeof(TestDataSource), nameof(TestDataSource.GetArgs))]
+public class GenericTestFixture<T, K>
 {
-    //...
+    public GenericTestFixture(T[] t, K[] k) { }
+
+    [Test, SequentialDependent]
+    public void TestMethod(
+        [FixtureDirectValueSource()] T a,
+        [FixtureDirectValueSource()] K b)
+    {
+        Assert.Pass($"{a} | {b}");
+    }
 }
 ```
+
+Results in the following test cases being generated:
+
+```
+GenericTestFixture<Int32,String>(System.Int32[],System.String[]) (3)
+    TestMethod (3)
+        TestMethod(-90,"c")
+        TestMethod(100,"b")
+        TestMethod(25,"a")
+GenericTestFixture<Single,Boolean>(System.Single[],System.Boolean[]) (3)
+    TestMethod (3)
+        TestMethod(0.01f,True)
+        TestMethod(33.0f,True)
+        TestMethod(float.Positivelnfinity,False)
+```
+
+## FixtureValueSource
+
+Used to annotate **parameters**. Takes a **type** and a **name**.
+
+The **type** is expected to be an arbitrary **data class** that can be found in the fixture's ``Arguments`` property. 
+
+The **name** is expected to be the name of a **member** that exists in that **data class**. 
+
+The **member** needs to be an **array** whose **element type** is assignable to the **parameter's type**.
+
+```csharp
+public class TestData<T, K>
+{
+    public T[] tParams;
+    public ICollection<K>[] kCollectionParams;
+}
+
+[TestFixtureSource(typeof(TestDataSource), nameof(TestDataSource.GetArgs))]
+public class GenericTestFixture<T, K>
+{
+    public GenericTestFixture(TestData<T, K> testData) { }
+
+    [Test, SequentialDependent]
+    public void TestMethod(
+        [FixtureValueSource(typeof(TestData<,>),
+            nameof(TestData<T, K>.tParams))]
+        T a,
+        [FixtureValueSource(typeof(TestData<,>),
+            nameof(TestData<T, K>.kCollectionParams))]
+        ICollection<K> b)
+    {
+        Assert.Pass(
+            a.ToString() + " | " +
+            b.ToString() + " | ");
+    }
+}
+```
+
+Results in the following test cases being generated:
+
+```
+GenericTestFixture<Int32,String> (NUnit.FixtureDependent.Sample.Simple.TestData 2[System.Int32,System.String)) (3)
+    TestMethod (3)
+        TestMethod(-90,System.Collections.Generic.List 1[System.String])
+        TestMethod(100,System.Collections.Generic.List"1[System.String])
+        TestMethod(25,System.Collections.Generic.List’ 1[System.String])
+GenericTestFixture<Single,Boolean> (NUnit.FixtureDependent.Sample.Simple.TestData 2[System.Single,System.Boolean]) (3)
+    TestMethod (3)
+        TestMethod(0.0f,System.Collections.Generic.List’ 1[System.Boolean])
+        TestMethod(33.0f,System.Collections.Generic. List’ 1[System.Boolean])
+        TestMethod(float.NaN,System.Collections.Generic.List’ 1[System.Boolean])
+```
+
+# How do I use it?
+**Download the [nuget package](https://www.nuget.org/packages/NUnit.FixtureDependent/).**
+
+**Check out ``src/NUnit.FixtureDependent.Sample``. The code, summary tags and comments will help you understand much better how to use it.**
+
+- ``src/NUnit.FixtureDependent.Sample/DirectSimple`` showcases how to use ``FixtureDirectValueSource`` and fluent type argument setting in the source.
+- ``src/NUnit.FixtureDependent.Sample/Simple`` showcases how to use ``FixtureValueSource`` and fluent type argument setting in the source.
+- ``src/NUnit.FixtureDependent.Sample/Complicated`` showcases how to use ``FixtureValueSource`` with a more explicit boilerplate heavy setup. The explicit steps can help fine tune the data setup process in some cases.
+
+**Steps for using ``FixtureDirectValueSource``:**
+1. Define a static class to hold test data. Use ``ExposedTestFixtureParams`` and its ``SetTypeArgs`` method to manually specify type arguments because NUnit can't infer them.
+2. Define a generic test fixture with a constructor that takes arguments matching the type and order of those defined in the source.
+3. Annotate generic test methods you want to parametrize with ``FixtureDirectValueSource``.
+
+**Steps for using ``FixtureValueSource``:**
+1. Define a test data class with generic arrays as members.
+2. Define a static class to hold test data. Use ``ExposedTestFixtureParams`` and its ``SetTypeArgs`` method to manually specify type arguments because NUnit can't infer them.
+3. Define a generic test fixture with a constructor that takes arguments matching the type and order of those defined in the source.
+4. Annotate generic test methods you want to parametrize with ``FixtureValueSource`` specifying the test data class's type as the first argument and the name of the member you want to access as the second argument.
 
 # Why does this exist?
 
@@ -43,37 +132,31 @@ NUnit has four ways of allowing generic tests:
 
 ### Downsides with existing approaches
 
-TestCase approach:
-- **Data duplication**. Inline data can lead to duplicating a lot of data over many methods.
-- **Too many attributes**. Number of methods multiplied by number of data sets.
+| Approach               | Data shareable across methods | Data sheareable across fixtures | Can use combining strategies | Generates individual test cases | Attribute Number   |
+| ---------------------- | ----------------------------- | ------------------------------- | ---------------------------- | ------------------------------- | ------------------ |
+| TestCase               | NO                            | NO                              | NO                           | **YES**                         | =NCases x NMethods |
+| TestCaseSource         | **YES**                       | **YES**                         | NO                           | **YES**                         | =NCases x NMethods |
+| TestFixture            | **YES**                       | NO                              | NO                           | NO                              | **=NCases**        |
+| TestFixtureCase        | **YES**                       | **YES**                         | NO                           | NO                              | **=NCases**        |
+| NUnit.FixtureDependent | **YES**                       | **YES**                         | **YES**                      | **YES**                         | **=NParameters**   |
 
-TestCaseSource approach:
-- **No combining strategies**. ``TestCaseSource`` requires that the source provide _complete rows_ of parameters, which makes it impossible to use combining strategies on the parameters.
-- **Too many attributes**. Number of methods multiplied by number of data sets.
+### Why do these things matter?
 
-TestFixture approach:
-- **Data duplication**. Data exists only for that specific test fixture. Somewhat mitigated since it's less likely data will be duplicated across multiple test fixtures.
-- **No combining strategies**. Cannot be used because the data is available to the test methods through accessing variables in the parent test fixture instead of through parameters.
-- **No individual test cases**. Because the data isn't fed to the test methods through parameters individual test cases cannot be generated.
-
-TestFixtureCase approach:
-- **No individual test cases**. For the same reasons as before.
-- **No combining strategies**. For the same reasons as before.
-
-### Why are these downsides
-
-- **Data duplication**. Isn't a problem with small data sets, but it can become unworkable with big data sets.
-- **Too many attributes**. Can get really annoying given a sufficiently high number of sources.
-- **No combining strategies**. Can artificially inflate the amount of setup or test data required.
-- **No individual test cases**. Can't immediately see the specific value that made a test method fail.
-
-**NUnit.FixtureDependent** allows you to mostly eliminate the aforementioned downsides. Data is not duplicated, the number of attributes is equal to the number of parameters, individual test cases are visible, and combining strategies can be used.
+- **Data shareable across methods**. The more methods you have using the same data the more duplication happens and the harder it is to maintain if you can't share data across methods.
+- **Data shareable across fixtures**. The more fixtures you have using the same data the more duplication happens and the harder it is to maintain if you can't share data across fixtures.
+- **No combining strategies**. Without being able to mix and match individual parameters from a test set, we are forced to either give up testing something more thoroughly, write the combinations manually or write multiple sources for each case that do the combining before the data is fed to the attribute. All of this takes time to write and ends up being more code to maintain.
+- **No individual test cases**. If you have a sequence of parameters you want to test and you can't immediately see the specific value that made a test method fail, this makes the unit tests less usable. ``TestFixture`` and ``TestFixtureCase`` are both designed to provide single fixture-wide variables that are treated as "globals" from the perspective of the test methods. They are not designed to take sequences of data and build test cases, but NUnit.FixtureDependent is.
+- **Attribute Number**. It can get somewhat more difficult to maintain code that has a lot of attributes, and definitely more unpleasant to write.
 
 # Should I use this?
-This kind of pattern can definitely be used in terrible ways and it has a decent amount of boilerplate. It will significantly inflate a codebase that doesn't need this kind of abstraction.
+This kind of pattern can definitely be used in bad ways. The root of the problem is that attribute based test discovery and execution obscures the relationship between the tests and data. 
 
-But sometimes, you just need to be able to test an implementation using multiple data sets of varying types and at that point using any of the four approaches explained results in some at least some significant downsides. If you want fine grained data to be easily visible in failed tests then you really want to have individual test cases be generated for each data input. If you have common data most/all test methods in a fixture use but the parameter list varies a little or you want to combine variables, the four approaches can be really tedious, but **NUnit.FixtureDependent** can do well.
+The type system cannot assist the developer in any way as Reflection is used to obtain the data. There are several ways to mess up setting up a ``FixtureValueSource`` and its relationship with its data is not immediately apparent, but this is sort of the case with all Source attributes.
 
-If you don't have a use case like that I would recommend you **NOT** use **NUnit.FixtureDependent** and use the ``TestFixtureSource`` approach for generic test fixtures.
+Another consideration is whether fixture parameters should even be permissible as test method parameters. NUnit *implictly* takes the stance that fixture parameters are atomic units of data that should not iterated over as if they were separable into smaller units. You can do it *anyway* with ``Assert.Multiple`` but that makes tests less usable without seeing individual test cases. ``Assert.Multiple`` should be used to check multiple claims about the same data, not the same claim about multiple data.
 
-If you have a use case that sounds _somewhat_ like that, I would recommend you still **NOT** use **NUnit.FixtureDependent** and try to see if you can redesign your tests first so that you don't need it.
+Sometimes, you just need to be able to test implementations using multiple data sets of varying types. When methods end up using largely the same data but with some variation in the parameter signature and/or the need for combining strategies, you don't have any remotely perfect solution on hand. But NUnit.FixtureDependent can offer a solution with different, arguably better tradeoffs.
+
+If you don't have a use case like that I would recommend you **NOT** use NUnit.FixtureDependent and use the ``TestFixtureSource`` approach for generic test fixtures.
+
+If you have a use case that sounds *somewhat* like that, I would recommend you try to see if you can redesign your tests first so that you don't need NUnit.FixtureDependent.
