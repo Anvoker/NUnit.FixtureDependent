@@ -141,7 +141,7 @@ NUnit has four ways of allowing generic tests:
 | TestCase               | NO                            | NO                              | NO                           | **YES**                         | =NCases x NMethods |
 | TestCaseSource         | **YES**                       | **YES**                         | NO                           | **YES**                         | =NCases x NMethods |
 | TestFixture            | **YES**                       | NO                              | NO                           | NO                              | **=NCases**        |
-| TestFixtureCase        | **YES**                       | **YES**                         | NO                           | NO                              | **=NCases**        |
+| TestFixtureSource      | **YES**                       | **YES**                         | NO                           | NO                              | **=NCases**        |
 | NUnit.FixtureDependent | **YES**                       | **YES**                         | **YES**                      | **YES**                         | **=NParameters**   |
 
 ### Why do these things matter?
@@ -149,7 +149,7 @@ NUnit has four ways of allowing generic tests:
 - **Data shareable across methods**. The more methods you have using the same data the more duplication happens and the harder it is to maintain if you can't share data across methods.
 - **Data shareable across fixtures**. The more fixtures you have using the same data the more duplication happens and the harder it is to maintain if you can't share data across fixtures.
 - **No combining strategies**. Without being able to mix and match individual parameters from a test set, we are forced to either give up testing something more thoroughly, write the combinations manually or write multiple sources for each case that do the combining before the data is fed to the attribute. All of this takes time to write and ends up being more code to maintain.
-- **No individual test cases**. If you have a sequence of parameters you want to test and you can't immediately see the specific value that made a test method fail, this makes the unit tests less usable. ``TestFixture`` and ``TestFixtureCase`` are both designed to provide single fixture-wide variables that are treated as "globals" from the perspective of the test methods. They are not designed to take sequences of data and build test cases, but NUnit.FixtureDependent is.
+- **No individual test cases**. If you have a sequence of parameters you want to test and you can't immediately see the specific value that made a test method fail, this makes the unit tests less usable. ``TestFixture`` and ``TestFixtureSource`` are both designed to provide single fixture-wide variables that are treated as "globals" from the perspective of the test methods. They are not designed to take sequences of data and build test cases, but NUnit.FixtureDependent is.
 - **Attribute Number**. It can get somewhat more difficult to maintain code that has a lot of attributes, and definitely more unpleasant to write.
 
 # Should I use this?
