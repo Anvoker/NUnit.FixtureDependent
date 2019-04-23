@@ -114,13 +114,17 @@ GenericTestFixture<Single,Boolean> (NUnit.FixtureDependent.Sample.Simple.TestDat
 **Steps for using ``FixtureDirectValueSource``:**
 1. Define a static class to hold test data. Use ``ExposedTestFixtureParams`` and its ``SetTypeArgs`` method to manually specify type arguments because NUnit can't infer them.
 2. Define a generic test fixture with a constructor that takes arguments matching the type and order of those defined in the source.
-3. Annotate generic test methods you want to parametrize with ``FixtureDirectValueSource``.
+3. Annotate generic test methods you want to parametrize with ``FixtureDirectValueSource``
+4. Annotate tests that use ``FixtureDirectValueSource`` with any NUnit.FixtureDependent combining strategy attribute such as ``SequentialDependent``.
 
 **Steps for using ``FixtureValueSource``:**
 1. Define a test data class with generic arrays as members.
 2. Define a static class to hold test data. Use ``ExposedTestFixtureParams`` and its ``SetTypeArgs`` method to manually specify type arguments because NUnit can't infer them.
 3. Define a generic test fixture with a constructor that takes arguments matching the type and order of those defined in the source.
 4. Annotate generic test methods you want to parametrize with ``FixtureValueSource`` specifying the test data class's type as the first argument and the name of the member you want to access as the second argument.
+5. Annotate tests that use ``FixtureValueSource`` with any NUnit.FixtureDependent combining strategy attribute such as ``SequentialDependent``.
+
+Note: Forgetting to set the combining strategy will result in a vanilla NUnit combining strategy being used by default which *cannot* deal with NUnit.FixtureDependent's source attributes.
 
 # Why does this exist?
 
@@ -157,6 +161,6 @@ Another consideration is whether fixture parameters should even be permissible a
 
 Sometimes, you just need to be able to test implementations using multiple data sets of varying types. When methods end up using largely the same data but with some variation in the parameter signature and/or the need for combining strategies, you don't have any remotely perfect solution on hand. But NUnit.FixtureDependent can offer a solution with different, arguably better tradeoffs.
 
-If you don't have a use case like that I would recommend you **NOT** use NUnit.FixtureDependent and use the ``TestFixtureSource`` approach for generic test fixtures.
-
-If you have a use case that sounds *somewhat* like that, I would recommend you try to see if you can redesign your tests first so that you don't need NUnit.FixtureDependent.
+- If you don't have a use case like that I would recommend you **NOT** use NUnit.FixtureDependent and use the ``TestFixtureSource`` approach for generic test fixtures.
+- If you have a use case that sounds *somewhat* like that, I would recommend you try to see if you can redesign your tests first so that you don't need NUnit.FixtureDependent.
+- If you have a use case that sounds much like that, try out NUnit.FixtureDependent.
