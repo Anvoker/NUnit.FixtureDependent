@@ -47,8 +47,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Simple2\GenericTestFixture.cs" />
-    <Compile Include="Simple2\TestDataSource.cs" />
+    <Compile Include="DirectSimple\GenericTestFixture.cs" />
+    <Compile Include="DirectSimple\TestDataSource.cs" />
     <Compile Include="Simple\GenericTestFixture.cs" />
     <Compile Include="Simple\TestData.cs" />
     <Compile Include="Simple\TestDataSource.cs" />
