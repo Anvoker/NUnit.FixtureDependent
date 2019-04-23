@@ -103,7 +103,7 @@ GenericTestFixture<Single,Boolean> (NUnit.FixtureDependent.Sample.Simple.TestDat
 ```
 
 # How do I use it?
-**Download the [nuget package](https://www.nuget.org/packages/NUnit.FixtureDependent/).**
+[![Nuget](https://buildstats.info/nuget/NUnit.FixtureDependent) Download the NuGet package](https://www.nuget.org/packages/NUnit.FixtureDependent)
 
 **Check out ``src/NUnit.FixtureDependent.Sample``. The code, summary tags and comments will help you understand much better how to use it.**
 
