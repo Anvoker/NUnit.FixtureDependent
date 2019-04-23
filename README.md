@@ -90,16 +90,16 @@ public class GenericTestFixture<T, K>
 Results in the following test cases being generated:
 
 ```
-GenericTestFixture<Int32,String> (NUnit.FixtureDependent.Sample.Simple.TestData 2[System.Int32,System.String)) (3)
+GenericTestFixture<Int32,String> (NUnit.FixtureDependent.Sample.Simple.TestData’2[System.Int32,System.String)) (3)
     TestMethod (3)
-        TestMethod(-90,System.Collections.Generic.List 1[System.String])
-        TestMethod(100,System.Collections.Generic.List"1[System.String])
-        TestMethod(25,System.Collections.Generic.List’ 1[System.String])
-GenericTestFixture<Single,Boolean> (NUnit.FixtureDependent.Sample.Simple.TestData 2[System.Single,System.Boolean]) (3)
+        TestMethod(-90,System.Collections.Generic.List’1[System.String])
+        TestMethod(100,System.Collections.Generic.List’1[System.String])
+        TestMethod(25,System.Collections.Generic.List’1[System.String])
+GenericTestFixture<Single,Boolean> (NUnit.FixtureDependent.Sample.Simple.TestData’2[System.Single,System.Boolean]) (3)
     TestMethod (3)
-        TestMethod(0.0f,System.Collections.Generic.List’ 1[System.Boolean])
-        TestMethod(33.0f,System.Collections.Generic. List’ 1[System.Boolean])
-        TestMethod(float.NaN,System.Collections.Generic.List’ 1[System.Boolean])
+        TestMethod(0.0f,System.Collections.Generic.List’1[System.Boolean])
+        TestMethod(33.0f,System.Collections.Generic. List’1[System.Boolean])
+        TestMethod(float.NaN,System.Collections.Generic.List’1[System.Boolean])
 ```
 
 # How do I use it?
