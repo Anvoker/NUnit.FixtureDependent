@@ -47,11 +47,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestDataFixtureConstructor.cs" />
-    <Compile Include="TestDataProvider.cs" />
-    <Compile Include="TestDataSource.cs" />
-    <Compile Include="TestData.cs" />
-    <Compile Include="GenericTestFixture.cs" />
+    <Compile Include="Simple2\GenericTestFixture.cs" />
+    <Compile Include="Simple2\TestDataSource.cs" />
+    <Compile Include="Simple\GenericTestFixture.cs" />
+    <Compile Include="Simple\TestData.cs" />
+    <Compile Include="Simple\TestDataSource.cs" />
+    <Compile Include="Complicated\TestDataFixtureConstructor.cs" />
+    <Compile Include="Complicated\TestDataAdjunct.cs" />
+    <Compile Include="Complicated\TestDataSource.cs" />
+    <Compile Include="Complicated\TestData.cs" />
+    <Compile Include="Complicated\GenericTestFixture.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -63,6 +68,7 @@
       <Name>NUnit.FixtureDependent</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
