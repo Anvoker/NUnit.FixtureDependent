@@ -1,9 +1,19 @@
 # NUnit.FixtureDependent
+
+[![Nuget](https://buildstats.info/nuget/NUnit.FixtureDependent) Download the NuGet package](https://www.nuget.org/packages/NUnit.FixtureDependent)
+
 Extends NUnit to permit generic test data residing in a test fixture to be passed to its test methods, allowing **generic parametrized test cases** to be generated **from that test fixture data**. 
 
 This decouples test methods from test data, allows combining strategies to be used on data that was fed from ``TestFixtureSource`` (which is normally impossible) and still lets the test cases display properly in the test runner GUI.
 
-# How it works
+## Table of Contents ##
+
+- [How it works](#how-it-works)
+- [How do I use it?](#how-do-i-use-it?)
+- [Why does this exist?](#why-does-this-exist)
+- [Should I use this?](#should-i-use-this)
+
+## How it works
 The ``Arguments`` property of a test fixture is populated with data by NUnit when a fixture is given its constructor arguments via an attribute like ``TestFixtureSource``.
 
 Normally, no other attributes access that property. But they **could**.
@@ -12,7 +22,7 @@ Normally, no other attributes access that property. But they **could**.
 
 These attributes can access the ``Arguments`` property, retrieve values and use them to parametrize generic test methods and generate test cases.
 
-## FixtureDirectValueSource
+### FixtureDirectValueSource
 
 Used to annotate **parameters**. Takes no arguments.
 
@@ -49,7 +59,7 @@ GenericTestFixture<Single,Boolean>(System.Single[],System.Boolean[]) (3)
         TestMethod(float.Positivelnfinity,False)
 ```
 
-## FixtureValueSource
+### FixtureValueSource
 
 Used to annotate **parameters**. Takes a **type** and a **name**.
 
@@ -102,8 +112,7 @@ GenericTestFixture<Single,Boolean> (NUnit.FixtureDependent.Sample.Simple.TestDat
         TestMethod(float.NaN,System.Collections.Generic.List’1[System.Boolean])
 ```
 
-# How do I use it?
-[![Nuget](https://buildstats.info/nuget/NUnit.FixtureDependent) Download the NuGet package](https://www.nuget.org/packages/NUnit.FixtureDependent)
+## How do I use it?
 
 **Check out ``src/NUnit.FixtureDependent.Sample``. The code, summary tags and comments will help you understand much better how to use it.**
 
@@ -126,7 +135,7 @@ GenericTestFixture<Single,Boolean> (NUnit.FixtureDependent.Sample.Simple.TestDat
 
 Note: Forgetting to set the combining strategy will result in a vanilla NUnit combining strategy being used by default which *cannot* deal with NUnit.FixtureDependent's source attributes.
 
-# Why does this exist?
+## Why does this exist?
 
 NUnit has four ways of allowing generic tests:
 1. **TestCase.** Specifying the data inline for each method via ``TestCase``.
@@ -152,7 +161,7 @@ NUnit has four ways of allowing generic tests:
 - **No individual test cases**. If you have a sequence of parameters you want to test and you can't immediately see the specific value that made a test method fail, this makes the unit tests less usable. ``TestFixture`` and ``TestFixtureSource`` are both designed to provide single fixture-wide variables that are treated as "globals" from the perspective of the test methods. They are not designed to take sequences of data and build test cases, but NUnit.FixtureDependent is.
 - **Attribute Number**. It can get somewhat more difficult to maintain code that has a lot of attributes, and definitely more unpleasant to write.
 
-# Should I use this?
+## Should I use this?
 This kind of pattern can definitely be used in bad ways. The root of the problem is that attribute based test discovery and execution obscures the relationship between the tests and data. 
 
 The type system cannot assist the developer in any way as Reflection is used to obtain the data. There are several ways to mess up setting up a ``FixtureValueSource`` and its relationship with its data is not immediately apparent, but this is sort of the case with all Source attributes.
