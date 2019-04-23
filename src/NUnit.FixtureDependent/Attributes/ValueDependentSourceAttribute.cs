@@ -32,14 +32,20 @@ using static NUnit.FixtureDependent.Internal.ReflectionHelper;
 namespace NUnit.FixtureDependent
 {
     /// <summary>
+    /// <para>
     /// Indicates a source that will provide data for one parameter of a test
-    /// method that is dependent on the arguments used to construct the Test
-    /// Fixture. This ONLY works with a Test Fixture that uses arguments in
-    /// its construction. So it works only when the Test Fixture has an
-    /// attribute like <see cref="TestFixtureSourceAttribute"/>.
+    /// method. The source is retrieved from the arguments used to construct the
+    /// test fixture.
+    /// </para>
+    ///
+    /// <para>
+    /// Accesses a value source in a member belonging to one of the fixture's
+    /// arguments. This can be used to facilitate data object patterns in the
+    /// test fixture's construction.
+    /// </para>
     /// </summary>
     [AttributeUsage(AttributeTargets.Parameter, AllowMultiple = true, Inherited = false)]
-    public class ValueDependentSourceAttribute : Attribute, IParameterDependentDataSource
+    public class FixtureValueSourceAttribute : Attribute, IParameterDependentDataSource
     {
         private const BindingFlags ALL_BINDINGS = BindingFlags.Public
                 | BindingFlags.NonPublic | BindingFlags.Static
@@ -60,7 +66,7 @@ namespace NUnit.FixtureDependent
         /// <param name="sourceName">The name of a method, property or field
         /// belonging to <paramref name="sourceType"/> that will provide
         /// data.</param>
-        public ValueDependentSourceAttribute(
+        public FixtureValueSourceAttribute(
             Type sourceType,
             string sourceName)
         {
@@ -74,7 +80,7 @@ namespace NUnit.FixtureDependent
             {
                 throw new InvalidDataSourceException(
                     $"The {nameof(sourceName)} specified on a " +
-                    $"{nameof(ValueDependentSourceAttribute)} must refer to a field, property or " +
+                    $"{nameof(FixtureValueSourceAttribute)} must refer to a field, property or " +
                     $"method that belongs to {nameof(sourceType)}.");
             }
         }
@@ -123,7 +129,7 @@ namespace NUnit.FixtureDependent
             {
                 throw new InvalidDataSourceException(
                     $"The {nameof(SourceType)} specified on a " +
-                    $"{nameof(ValueDependentSourceAttribute)} must refer to an argument of that " +
+                    $"{nameof(FixtureValueSourceAttribute)} must refer to an argument of that " +
                     "type that exists in the argument list of the containing Test Fixture.");
             }
 
