@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace NUnit.FixtureDependent.Sample
+namespace NUnit.FixtureDependent.Sample.Simple
 {
     /// <summary>
     /// Package our data into a data class for easy passing.
@@ -13,7 +13,8 @@ namespace NUnit.FixtureDependent.Sample
         public ICollection<K>[] kCollectionParams;
 
         // Other variables can be passed and accessed in the Test Fixture, but
-        // they won't work when given to ValueSourceDependent
+        // they won't work when given to ValueSourceDependent since it expects
+        // an array for value sources.
         public string otherParam;
     }
 }
