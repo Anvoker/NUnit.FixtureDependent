@@ -16,7 +16,7 @@ These attributes can access the ``Arguments`` property, retrieve values and use 
 
 Used to annotate **parameters**. Takes no arguments.
 
-Attempts to find an object in the fixture's ``Arguments`` property whose type is assignable to the **parameter's type**.
+Attempts to find an array in the fixture's ``Arguments`` property whose type is assignable to the **parameter's type**. If found, it is used as the value source for that parameter.
 
 ```csharp
 [TestFixtureSource(typeof(TestDataSource), nameof(TestDataSource.GetArgs))]
@@ -55,9 +55,9 @@ Used to annotate **parameters**. Takes a **type** and a **name**.
 
 The **type** is expected to be an arbitrary **data class** that can be found in the fixture's ``Arguments`` property. 
 
-The **name** is expected to be the name of a **member** that exists in that **data class**. 
+The **name** is expected to be the name of a **member** that exists in that **data class**. The **member** needs to be an **array** whose **element type** is assignable to the **parameter's type**.
 
-The **member** needs to be an **array** whose **element type** is assignable to the **parameter's type**.
+Attempts to find an object of the specified **type** in the fixture's ``Arguments`` property and then access one if its members with the specified **name**. If found and its return matches the **parameter's type**, it is used as value source for that parameter.
 
 ```csharp
 public class TestData<T, K>
