@@ -83,11 +83,9 @@ public class GenericTestFixture<T, K>
 
     [Test, SequentialDependent]
     public void TestMethod(
-        [FixtureValueSource(typeof(TestData<,>),
-            nameof(TestData<T, K>.tParams))]
+        [FixtureValueSource(typeof(TestData<,>), nameof(TestData<T, K>.tParams))]
         T a,
-        [FixtureValueSource(typeof(TestData<,>),
-            nameof(TestData<T, K>.kCollectionParams))]
+        [FixtureValueSource(typeof(TestData<,>), nameof(TestData<T, K>.kCollectionParams))]
         ICollection<K> b)
     {
         Assert.Pass(
@@ -145,7 +143,7 @@ NUnit has four ways of allowing generic tests:
 
 ### Downsides with existing approaches
 
-| Approach               | Data shareable across methods | Data sheareable across fixtures | Can use combining strategies | Generates individual test cases | Attribute Number   |
+| Approach               | Data shareable across methods | Data shareable across fixtures | Can use combining strategies | Generates individual test cases | Attribute Number   |
 | ---------------------- | ----------------------------- | ------------------------------- | ---------------------------- | ------------------------------- | ------------------ |
 | TestCase               | NO                            | NO                              | NO                           | **YES**                         | =NCases x NMethods |
 | TestCaseSource         | **YES**                       | **YES**                         | NO                           | **YES**                         | =NCases x NMethods |
