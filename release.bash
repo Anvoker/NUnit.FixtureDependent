@@ -272,15 +272,26 @@ git_warn_dirty() {
     return 0
 }
 
-build() {
+build_for_release() {
+    dotnet clean --configuration Debug
+    dotnet clean --configuration Release
     dotnet build --configuration Release
 }
 
 push_nuget_package() {
     local -r csproj_path="$1"
+    local version_current
+    local release_notes_current
     local nupkg
 
+    package_id="$(get_package_id_from_csproj "$csproj_path")"; readonly pacakge_id
     nupkg="$(get_nupkg_filename "$csproj_path")"; readonly nupkg
+
+    # Report current version and release notes.
+    version_current="$(get_version_from_csproj "$csproj_path")"; readonly version_current
+    echo "${bold}Current version:${normal} $version_current"
+    release_notes_current="$(get_release_notes_from_csproj "$csproj_path")"; readonly release_notes_current
+    echo "${bold}Current release notes:${normal} $release_notes_current"
 
     echo "Proceed to pushing \"$nupkg\"? ${bold}[Y\N]${normal}"
 
@@ -293,7 +304,7 @@ push_nuget_package() {
         esac
     done
 
-    nuget push "$nupkg" -Source "https://api.nuget.org/v3/index.json"
+    nuget push "build/${package_id}/Release/AnyCPU/${nupkg}" -Source https://api.nuget.org/v3/index.json
 }
 
 test_csproj_path() {
@@ -361,7 +372,7 @@ main() {
         fi
     fi
 
-    build
+    build_for_release
     push_nuget_package "$csproj_path"
 }
 

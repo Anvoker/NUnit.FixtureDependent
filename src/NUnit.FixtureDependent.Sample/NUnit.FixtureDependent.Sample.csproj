@@ -8,6 +8,7 @@
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <RepositoryUrl>https://gitlab.com/Anvoker/NUnit.FixtureDependent</RepositoryUrl>
     <PackageIconUrl>https://gitlab.com/Anvoker/NUnit.FixtureDependent/raw/master/icon.svg</PackageIconUrl>
+    <MinClientVersion>3.0.0</MinClientVersion>
 
     <OutputPath>..\..\build\$(PackageId)\$(Configuration)\$(Platform)</OutputPath>
     <BaseIntermediateOutputPath>..\..\obj\$(PackageId)\</BaseIntermediateOutputPath>
