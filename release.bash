@@ -258,7 +258,7 @@ git_warn_dirty() {
         fi
     fi
 
-    if [[ $need_response ]] ; then
+    if (( need_response == 0 )) ; then
         while true ; do
             IFS=$'\n\r' read -r -e -p '> ' response
             case "$response" in
