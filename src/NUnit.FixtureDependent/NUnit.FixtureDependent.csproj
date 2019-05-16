@@ -10,8 +10,8 @@
     <PackageIconUrl>https://gitlab.com/Anvoker/NUnit.FixtureDependent/raw/master/icon.svg</PackageIconUrl>
     <MinClientVersion>3.0.0</MinClientVersion>
 
-    <Version>2.0.1</Version>
-    <PackageReleaseNotes>Migrating to netstandard and NET.Sdk project management.</PackageReleaseNotes>
+    <Version>2.0.2</Version>
+    <PackageReleaseNotes>Minor bug fix to FixtureValueSource safety.</PackageReleaseNotes>
     <Description>Extends NUnit to allow the passing of generic parameters to test methods via TestFixtureSource.</Description>
     <PackageTags>nunit test testing tdd generic parametric parametrized fixture valuesource testfixturesource</PackageTags>
 
