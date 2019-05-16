@@ -123,7 +123,7 @@ namespace NUnit.FixtureDependent
 
         private IEnumerable GetDataSource(IParameterInfo parameter, Test suite)
         {
-            var fixtureDataObject = LocateArgumentByType(suite.Arguments, SourceType);
+            var fixtureDataObject = LocateArgumentByElementType(suite.Arguments, SourceType);
 
             if (fixtureDataObject == null)
             {
@@ -149,13 +149,22 @@ namespace NUnit.FixtureDependent
             return dataSource;
         }
 
-        private static object LocateArgumentByType(object[] arguments, Type type)
+        /// <summary>
+        /// Searches through a argument list to find an argument whose type is 
+        /// equal to that of the element type of the specified type.
+        /// </summary>
+        /// <param name="arguments">The argument list of the fixture constructor.</param>
+        /// <param name="type">The type whose element type to search for.</param>
+        /// <returns>The object that matches the element type; null if none match.</returns>
+        private static object LocateArgumentByElementType(object[] arguments, Type type)
         {
             foreach (var argument in arguments)
             {
                 var argumentType = argument.GetType();
-                var genericType = argumentType.GetGenericTypeDefinition();
-                if (type == genericType || genericType.IsSubclassOf(type))
+                Type genericType = null;
+                if (argumentType.IsGenericType 
+                    && ((genericType = argumentType.GetGenericTypeDefinition())  != null) 
+                    && (type == genericType || genericType.IsSubclassOf(type)))
                 {
                     return argument;
                 }
@@ -163,7 +172,7 @@ namespace NUnit.FixtureDependent
                 {
                     foreach (var i in argumentType.GetInterfaces())
                     {
-                        if (i.GetGenericTypeDefinition() == type)
+                        if (i.IsGenericType && i.GetGenericTypeDefinition() == type)
                         {
                             return argument;
                         }
